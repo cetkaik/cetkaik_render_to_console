@@ -1,4 +1,4 @@
-use cetkaik_compact_representation::*;
+#![warn(clippy::pedantic)]
 use cetkaik_fundamental::{serialize_prof, AbsoluteSide, Color};
 use cetkaik_naive_representation::relative;
 use cetkaik_traits::IsField;
@@ -25,7 +25,7 @@ use relative::Piece;
 pub trait PrintToConsole {
     fn to_colored_string(&self) -> String;
     fn print_to_console(&self) {
-        print!("{}", self.to_colored_string())
+        print!("{}", self.to_colored_string());
     }
 }
 
@@ -72,6 +72,22 @@ impl PrintToConsole
     )
 {
     fn to_colored_string(&self) -> String {
+        use cetkaik_compact_representation::MaybeTam2;
+
+        fn to_relative(piece: cetkaik_compact_representation::PieceWithSide) -> relative::Piece {
+            match piece.prof_and_side() {
+                MaybeTam2::Tam2 => relative::Piece::Tam2,
+                MaybeTam2::NotTam2((prof, side)) => relative::Piece::NonTam2Piece {
+                    color: piece.color(),
+                    prof,
+                    side: match side {
+                        AbsoluteSide::ASide => relative::Side::Downward,
+                        AbsoluteSide::IASide => relative::Side::Upward,
+                    },
+                },
+            }
+        }
+
         format!(
             "{} {}\n",
             self.0
@@ -79,18 +95,7 @@ impl PrintToConsole
                 .map(|p| {
                     match p {
                         None => "-一".to_string(),
-                        Some(piece) => match piece.prof_and_side() {
-                            MaybeTam2::Tam2 => relative::Piece::Tam2,
-                            MaybeTam2::NotTam2((prof, side)) => relative::Piece::NonTam2Piece {
-                                color: piece.color(),
-                                prof,
-                                side: match side {
-                                    AbsoluteSide::ASide => relative::Side::Downward,
-                                    AbsoluteSide::IASide => relative::Side::Upward,
-                                },
-                            },
-                        }
-                        .to_colored_string(),
+                        Some(piece) => to_relative(piece).to_colored_string(),
                     }
                 })
                 .collect::<Vec<_>>()
@@ -100,7 +105,7 @@ impl PrintToConsole
     }
 }
 
-impl PrintToConsole for Board {
+impl PrintToConsole for cetkaik_compact_representation::Board {
     fn to_colored_string(&self) -> String {
         format!(
             "-{}-\n{}",
@@ -115,13 +120,12 @@ impl PrintToConsole for Board {
                     )
                         .to_colored_string()
                 })
-                .collect::<Vec<_>>()
-                .join("")
+                .collect::<String>()
         )
     }
 }
 
-impl PrintToConsole for Field {
+impl PrintToConsole for cetkaik_compact_representation::Field {
     fn to_colored_string(&self) -> String {
         format!(
             "ASide hop1zuo1: [{}]\n\n{}\n\nIASide hop1zuo1: [{}]\n\n======================================\n\n",

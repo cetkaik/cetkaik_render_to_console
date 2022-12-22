@@ -1,7 +1,7 @@
-use cetkaik_compact_representation::{Field, Coord};
+use cetkaik_compact_representation::{Coord, Field};
 use cetkaik_fundamental::AbsoluteSide;
-use cetkaik_traits::{IsAbsoluteField, IsField};
 use cetkaik_render_to_console::*;
+use cetkaik_traits::{IsAbsoluteField, IsField};
 
 fn main() {
     let mut field = Field::yhuap_initial();
