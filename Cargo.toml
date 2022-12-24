@@ -4,6 +4,7 @@ version = "0.1.1"
 edition = "2021"
 license = "MIT"
 description = "renders cetkaik to console"
+repository = "https://github.com/cetkaik/cetkaik_render_to_console"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
